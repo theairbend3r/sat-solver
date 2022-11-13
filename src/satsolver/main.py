@@ -1,14 +1,14 @@
 import argparse
-from satsolver.dpll import dpll
+from satsolver.dpll import DPLL
 
 
-def run():
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-S", help="Algorithm type. Takes values: 1, 2, or 3.", type=int
     )
     parser.add_argument(
-        "filename",
+        "input_file_path",
         help="Input file with required input clauses (sudoku rules + puzzle).",
         type=str,
     )
@@ -18,4 +18,5 @@ def run():
         print("Using default DPLL.")
         args.S = 1
 
-    dpll(algorithm=args.S, problem_file=args.filename)
+    dpll = DPLL(algorithm=args.S)
+    dpll.run(input_file_path=args.input_file_path)

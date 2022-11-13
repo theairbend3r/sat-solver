@@ -7,4 +7,4 @@ name = "satsolver"
 version = "0.0.1"
 
 [project.scripts]
-SAT = "satsolver.run:run"
+SAT = "satsolver.main:main"
