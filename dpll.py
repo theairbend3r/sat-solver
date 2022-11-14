@@ -88,5 +88,6 @@ for solution in all_solutions:
     if solution > 0:
         sudoku_solution.append(solution)
 
+sudoku_solution.sort()
 print(sudoku_solution)
 print(len(sudoku_solution))
