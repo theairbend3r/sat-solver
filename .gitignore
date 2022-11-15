@@ -1,6 +1,6 @@
 # ignore txt files
-.txt
-.cnf
+*.txt
+*.cnf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
