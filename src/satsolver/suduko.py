@@ -30,15 +30,17 @@ class Sudoku:
     def encode_all_sudoku(self, all_sudoku_list: list):
         return [self.encode_sudoku(sudoku) for sudoku in all_sudoku_list]
 
-    def save_soduko(self, encoded_sudoku: list):
-        with open(f"./../../data/sudoku_dimacs/{self.file_name}_sudoku.cnf", "w") as f:
+    def save_soduko(self, encoded_sudoku: list, filename: str = ""):
+        with open(
+            f"./../../data/sudoku_dimacs/{self.file_name}_sudoku_{filename}.cnf", "w"
+        ) as f:
             f.write("p cnf 999 \n")
             for val in encoded_sudoku:
                 f.write(f"{val[0]}{val[1]}{val[2]} {val[3]} \n")
 
     def save_all_suduko(self, all_encoded_sudoku_list: list):
-        for encoded_sudoku in all_encoded_sudoku_list:
-            self.save_soduko(encoded_sudoku=encoded_sudoku)
+        for i, encoded_sudoku in enumerate(all_encoded_sudoku_list):
+            self.save_soduko(encoded_sudoku=encoded_sudoku, filename=str(i))
 
 
 if __name__ == "__main__":
