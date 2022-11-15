@@ -20,3 +20,7 @@ def main():
 
     dpll = DPLL(algorithm=args.S)
     dpll.run(input_file_path=args.input_file_path)
+
+
+if __name__ == "__main__":
+    main()
