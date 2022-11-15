@@ -14,7 +14,7 @@ class Sudoku:
         return all_sudoku_list
 
     def encode_sudoku(self, sudoku: list) -> list:
-        sudoku = sudoku[:-1]
+        # sudoku = sudoku[:-1]
         print(len(sudoku))
         print(sudoku)
 
