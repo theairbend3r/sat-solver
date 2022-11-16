@@ -6,7 +6,7 @@ class Sudoku:
         # filepaths
         self.rules_filepath = rules_filepath
         self.raw_sudoku_filepath = raw_sudoku_filepath
-        # ?? probably should convert the logic below to use regex
+        # ?? should probably convert the logic below to use regex
         self.raw_sudoku_filename = self.raw_sudoku_filepath.split("/")[-1].split(".")[0]
 
         # load rules and sudoku
@@ -25,13 +25,18 @@ class Sudoku:
         Returns
         -------
         list
-            sudoku rules.
+            sudoku rules (list of tuples).
 
         """
         with open(self.rules_filepath, "r") as f:
-            rules = f.readlines()
+            rules_list = f.readlines()
 
-        return rules
+        rules_list = [rule.strip() for rule in rules_list]
+        # skip the first line (contains comment p cnf 999 9999)
+        rules_list = rules_list[1:]
+        rules_list = [tuple(rule.split()) for rule in rules_list]
+
+        return rules_list
 
     def read_sudoku(self) -> list:
         """Read raw sudoku .txt file.
@@ -44,6 +49,8 @@ class Sudoku:
         """
         with open(self.raw_sudoku_filepath, "r") as f:
             sudoku_list = f.readlines()
+
+        sudoku_list = [sudoku.strip() for sudoku in sudoku_list]
 
         return sudoku_list
 
@@ -59,18 +66,23 @@ class Sudoku:
         Returns
         -------
         list
-            single encoded sudoku
+            single encoded sudoku (list of tuples)
 
         """
-        # sudoku = sudoku[:-1]
-        # print(len(sudoku))
-        # print(sudoku)
-        #
-        # if int(math.sqrt(len(sudoku))) ** 2 != len(sudoku):
-        #     raise ValueError("Incorrect sudoku length (not a perfect square.)")
-        #
-        # sudoku_length = math.isqrt(len(sudoku))
+
+        if int(math.sqrt(len(sudoku))) ** 2 != len(sudoku):
+            raise ValueError("Incorrect sudoku length (not a perfect square.)")
+
+        sudoku_dimension = math.isqrt(len(sudoku))
         encoded_sudoku = []
+
+        idx = 0
+        for i in range(sudoku_dimension):
+            for j in range(sudoku_dimension):
+                if sudoku[idx] != ".":
+                    encoded_sudoku.append((i, j, idx))
+
+                idx += 1
 
         # [(1, 1, 5, 0), (1, 2, 9, 0)]
         return encoded_sudoku
@@ -105,7 +117,11 @@ class Sudoku:
             Combined sudoku and rules.
 
         """
-        return encoded_sudoku + encoded_rules
+        clause_list = []
+        for es in encoded_sudoku:
+            clause_list.append(es + encoded_rules[:5])
+
+        return clause_list
 
     def _save_single_soduko(self, encoded_sudoku: list, filename: str = ""):
         """Save a single sudoku list as a .txt file.
@@ -142,5 +158,11 @@ if __name__ == "__main__":
         raw_sudoku_filepath="./../../data/sudoku_raw/top91.sdk.txt",
         rules_filepath="./../../data/sudoku_rules/sudoku-rules-9x9.txt",
     )
-    print(sudoku.rules)
-    print(sudoku.sudoku)
+
+    # for i, s in enumerate((sudoku.sudoku[0])):
+    #     print(i, s)
+    # print(sudoku.sudoku[0])
+    # print(len(sudoku.sudoku[0]))
+    # print(sudoku._encode_single_sudoku(sudoku.sudoku[0]))
+    # print(sudoku.rules)
+    print(sudoku.clauses)
