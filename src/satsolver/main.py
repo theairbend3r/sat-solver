@@ -27,7 +27,7 @@ def main():
     )
 
     dpll = DPLL(algorithm=args.S)
-    dpll.run(clauses=sudoku.clauses, assignments={})
+    dpll.run(clauses=sudoku.clauses)
 
 
 if __name__ == "__main__":
