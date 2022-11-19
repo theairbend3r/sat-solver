@@ -119,7 +119,7 @@ class Sudoku:
         """
         clause_list = []
         for es in encoded_sudoku:
-            clause_list.append(es + encoded_rules[:5])
+            clause_list.append(es + encoded_rules)
 
         return clause_list
 
@@ -165,4 +165,5 @@ if __name__ == "__main__":
     # print(len(sudoku.sudoku[0]))
     # print(sudoku._encode_single_sudoku(sudoku.sudoku[0]))
     # print(sudoku.rules)
+    print(len(sudoku.clauses))
     print(sudoku.clauses)

@@ -5,6 +5,11 @@ class DPLL:
     def dpll_baseline(self, clauses: list, solution: dict = {}):
         # write recursive code here
         print(f"running dpll baseline on combined clauses {clauses}")
+        if len(clauses) == 0:
+            return True
+        if any(c == [] for c in clauses):
+            return False
+
         return solution
 
     def dpll_heuristic_1(self, clauses, solution: dict = {}):
