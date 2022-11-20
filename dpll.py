@@ -1,4 +1,5 @@
 import random
+from collections import Counter
 def encode_sudoku(filename: str):
     sudoku = open(filename, "r")
     t = []
@@ -7,16 +8,37 @@ def encode_sudoku(filename: str):
         for chr in line:
             temp.append(chr)
         t.append(temp)
+    size_3 = 1
+    size_6 = 1
+    size_10 = 1
 
+    experiment = []
     for line in t:
+        length = 82 - line.count(".")
+        if length == 18 and size_3 <= 10:
+            experiment.append(line)
+            size_3 += 1
+        elif length == 24 and size_6 <= 10:
+            experiment.append(line)
+            size_6 += 1
+        elif length == 27 and size_10 <= 10:
+            experiment.append(line)
+            size_10 += 1
+
+    print(size_3, size_6, size_10)
+    f = open("experiment.cnf", 'w')
+
+    for line in experiment:
         index = 0
-        f = open("encoded-sudoku-"+str(t.index(line)+1)+".cnf", 'w')
         f.write("p cnf 999" + str(t.index(line)) + "\n")
         for i in range(9):       
             for j in range(9):
                 if line[index] != ".":
                     f.write(str(i+1)+str(j+1)+str(line[index]) + " 0"+ "\n")
                 index += 1
+        f.write("\n")
+
+encode_sudoku("/Users/alonefrati/Desktop/KR-1/top2365.sdk.txt")
 
 def get_cnf(filename: str):
     rules = open(filename, "r")
@@ -71,23 +93,23 @@ def dpll(cnf, assignments={}):
  
     return False, None
 
-encode_sudoku("top91.sdk.txt")
-rules = get_cnf("sudoku-rules-9x9.txt")
-sudoku = get_cnf("encoded-sudoku-1.cnf")
-
-clause_list =  sudoku + rules
-clause_list = [set(ele) for ele in clause_list]
-
-cnf = tautology(clause_list)
-
-sat, vals = dpll(cnf)
-
-all_solutions = vals.values()
-sudoku_solution = []
-for solution in all_solutions:
-    if solution > 0:
-        sudoku_solution.append(solution)
-
-sudoku_solution.sort()
-print(sudoku_solution)
-print(len(sudoku_solution))
+# encode_sudoku("top91.sdk.txt")
+# rules = get_cnf("sudoku-rules-9x9.txt")
+# sudoku = get_cnf("encoded-sudoku-1.cnf")
+#
+# clause_list =  sudoku + rules
+# clause_list = [set(ele) for ele in clause_list]
+#
+# cnf = tautology(clause_list)
+#
+# sat, vals = dpll(cnf)
+#
+# all_solutions = vals.values()
+# sudoku_solution = []
+# for solution in all_solutions:
+#     if solution > 0:
+#         sudoku_solution.append(solution)
+#
+# sudoku_solution.sort()
+# print(sudoku_solution)
+# print(len(sudoku_solution))
