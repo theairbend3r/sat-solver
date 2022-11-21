@@ -1,36 +1,38 @@
 import random
 from collections import Counter
-def encode_sudoku(filename: str):
-    sudoku = open(filename, "r")
+def experiment_sudoku(filename: str, size: int):
+    experiment = []
+    sudoku1 = open(filename, "r")
     t = []
-    for line in sudoku:
+    for line in sudoku1:
         temp = []
         for chr in line:
             temp.append(chr)
         t.append(temp)
-    size_3 = 1
-    size_6 = 1
-    size_10 = 1
+    size_list = 1
 
-    experiment = []
     for line in t:
-        length = 82 - line.count(".")
-        if length == 18 and size_3 <= 10:
-            experiment.append(line)
-            size_3 += 1
-        elif length == 24 and size_6 <= 10:
-            experiment.append(line)
-            size_6 += 1
-        elif length == 27 and size_10 <= 10:
-            experiment.append(line)
-            size_10 += 1
+        for i in range(len(line)):
+            print(82 - line.count("."))
+            if 82 - line.count(".") <= size and size_list <= 11:
+                experiment.append(line)
+                size_list += 1
+            elif size_list >= 11:
+                break
+            else:
+                try:
+                    int(line[i])
+                    line[i] = "."
+                except ValueError:
+                    continue
 
-    print(size_3, size_6, size_10)
-    f = open("experiment.cnf", 'w')
+    return experiment, size
+def encode_sudoku(experiment: list, size: int):
+    f = open("experiment" + str(size - 1) + ".cnf", 'w')
 
     for line in experiment:
         index = 0
-        f.write("p cnf 999" + str(t.index(line)) + "\n")
+        f.write("p cnf 999" + "\n")
         for i in range(9):       
             for j in range(9):
                 if line[index] != ".":
@@ -38,7 +40,8 @@ def encode_sudoku(filename: str):
                 index += 1
         f.write("\n")
 
-encode_sudoku("/Users/alonefrati/Desktop/KR-1/top2365.sdk.txt")
+experiment_1, size = experiment_sudoku("/Users/alonefrati/Desktop/KR-1/top2365.sdk.txt", 16)
+encode_sudoku(experiment_1, size)
 
 def get_cnf(filename: str):
     rules = open(filename, "r")
