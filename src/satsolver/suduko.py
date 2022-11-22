@@ -6,6 +6,7 @@ class Sudoku:
         # filepaths
         self.rules_filepath = rules_filepath
         self.raw_sudoku_filepath = raw_sudoku_filepath
+
         # ?? should probably convert the logic below to use regex
         self.raw_sudoku_filename = self.raw_sudoku_filepath.split("/")[-1].split(".")[0]
 
@@ -25,7 +26,7 @@ class Sudoku:
         Returns
         -------
         list
-            sudoku rules (list of tuples).
+            sudoku rules (list of list).
 
         """
         with open(self.rules_filepath, "r") as f:
@@ -34,7 +35,9 @@ class Sudoku:
         rules_list = [rule.strip() for rule in rules_list]
         # skip the first line (contains comment p cnf 999 9999)
         rules_list = rules_list[1:]
-        rules_list = [tuple(rule.split()) for rule in rules_list]
+        rules_list = [
+            set(int(r) for r in rule.split() if r != "0") for rule in rules_list
+        ]
 
         return rules_list
 
@@ -66,7 +69,7 @@ class Sudoku:
         Returns
         -------
         list
-            single encoded sudoku (list of tuples)
+            single encoded sudoku (list of list)
 
         """
 
@@ -80,11 +83,14 @@ class Sudoku:
         for i in range(sudoku_dimension):
             for j in range(sudoku_dimension):
                 if sudoku[idx] != ".":
-                    encoded_sudoku.append((i, j, idx))
+                    encoded_sudoku.append(
+                        set([int(f"{i + 1}{j + 1}{int(sudoku[idx])}")])
+                    )
 
                 idx += 1
 
         # [(1, 1, 5, 0), (1, 2, 9, 0)]
+        # [[115], [129]]
         return encoded_sudoku
 
     def encode_sudoku(self) -> list:
@@ -165,5 +171,5 @@ if __name__ == "__main__":
     # print(len(sudoku.sudoku[0]))
     # print(sudoku._encode_single_sudoku(sudoku.sudoku[0]))
     # print(sudoku.rules)
-    print(len(sudoku.clauses))
-    print(sudoku.clauses)
+    print(len(sudoku.clauses[0]))
+    print(sudoku.clauses[0][:25])

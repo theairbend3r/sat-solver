@@ -26,8 +26,16 @@ def main():
         rules_filepath="./data/sudoku_rules/sudoku-rules-9x9.txt",
     )
 
+    # get clauses for a single sudoku
+    clauses = sudoku.clauses[0]
+
+    # run dpll
     dpll = DPLL(algorithm=args.S)
-    dpll.run(clauses=sudoku.clauses)
+    is_satisfiable, solution_values = dpll.run(clauses=clauses)
+    solution = dpll.process_solution(solution_values=solution_values)
+
+    print(f"Sudoku satisfiability = {is_satisfiable}")
+    print(f"Solution: \n {solution}")
 
 
 if __name__ == "__main__":
