@@ -31,10 +31,23 @@ cd sat-solver
 pip install -e .
 ```
 
-### Run file
+> Note: the file paths inside script are relative to the directory the script is called from. Call scripts from
+> inside the `sat-solver` directory.
+
+### Single file runner
 
 The CLI argument format is: `SAT -S {n} {filename}` where `n=1, 2, or 3` denotes the algorithm to be run on `filename`.
 
 ```
 SAT -S 2 mydir/myfile.txt
+```
+
+### Experiment Runner
+
+Runs all algorithms against all input files multiple times.
+
+From inside `sat-sover/`, run:
+
+```
+sat-solver$ python src/satsolver/run_experiment.py
 ```

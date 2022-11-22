@@ -21,6 +21,7 @@ class Visualisation:
             xlabel="DPLL Algorithms",
             ylabel="Time Elapsed (seconds)",
         )
+        plt.savefig("./plots/average_algo_runtime.png")
         plt.show()
 
 
