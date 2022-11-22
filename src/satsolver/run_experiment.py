@@ -16,25 +16,45 @@ def main():
         rules_filepath=rules_filepath,
     )
 
+    # csv file to store experiment data for visualization
+    with open("./data/output/experiment_stats.csv", "w") as f:
+        f.write(
+            "run,algorithm,is_satisfiable,sudoku_file,sudoku_file_id,time_elapsed solution"
+        )
+
     # run all algorithms
-    for algorithm in [1, 2, 3]:
-        dpll = DPLL(algorithm=algorithm)
-        for clauses in sudoku.clauses:
-            # measure running time of dpll
-            start = perf_counter()
-            is_satisfiable, solution_values = dpll.run(clauses=clauses)
-            end = perf_counter()
+    runs = 1
 
-            # process solution
-            solution = dpll.process_solution(solution_values=solution_values)
+    for run in range(1, runs + 1):
+        for algorithm in [1, 2, 3]:
+            dpll = DPLL(algorithm=algorithm)
+            for clauses_idx, clauses in enumerate(sudoku.clauses):
+                print(f"Running algorithm {algorithm}.")
+                # measure running time of dpll
+                start = perf_counter()
+                is_satisfiable, solution_values = dpll.run(clauses=clauses)
+                end = perf_counter()
 
-            print(f"DPLL version = {algorithm}")
-            print(f"Sudoku satisfiability = {is_satisfiable}")
-            print(f"Time elapsed = {end - start}")
-            print(f"Solution: \n {solution}")
+                # time elapsed
+                time_elapsed = end - start
 
-            print("=" * 50)
+                # process solution
+                solution = dpll.process_solution(solution_values=solution_values)
 
+                # log output
+                print(f"DPLL version = {algorithm}")
+                print(f"Sudoku satisfiability = {is_satisfiable}")
+                print(f"Time elapsed = {time_elapsed}")
+                print(f"Solution: \n {solution}")
 
-if __name__ == "__main__":
-    main()
+                print("=" * 50)
+
+                with open("./data/output/experiment_stats.csv", "a") as f:
+                    f.write(
+                        f"{run},{dpll.algorithm_to_name(algorithm_number=algorithm)},{is_satisfiable},{raw_sudoku_filepath},{clauses_idx},{time_elapsed},{' '.join(solution)}\n"
+                    )
+
+                break
+
+    if __name__ == "__main__":
+        main()

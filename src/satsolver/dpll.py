@@ -211,6 +211,11 @@ class DPLL:
 
         return solution
 
+    def algorithm_to_name(self, algorithm_number: int) -> str:
+        a2n = {1: "Baseline", 2: "Heuristic 1", 3: "Heuristic 2"}
+
+        return a2n[algorithm_number]
+
 
 if __name__ == "__main__":
     from satsolver.suduko import Sudoku
