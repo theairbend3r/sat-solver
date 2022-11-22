@@ -14,9 +14,16 @@ https://github.com/theairbend3r/sat-solver.git
 
 ```
 sat-solver/data/
+data/
+├── output
+│   └── experiment_stats_2022_11_22_16_50.csv
 ├── sudoku_dimacs
-│   └── sudoku1.cnf
+│   └── top91_sudoku.cnf
 ├── sudoku_raw
+│   ├── experiment_raw15.txt
+│   ├── experiment_raw18.txt
+│   ├── experiment_raw4.txt
+│   ├── experiment_raw9.txt
 │   └── top91.sdk.txt
 └── sudoku_rules
     └── sudoku-rules-9x9.txt
