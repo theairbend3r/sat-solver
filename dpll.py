@@ -10,13 +10,15 @@ def experiment_sudoku(filename: str, size: int):
             temp.append(chr)
         t.append(temp)
     size_list = 1
-
+    f = open("experiment_raw" + str(size - 1) + ".cnf", 'w')
     for line in t:
         for i in range(len(line)):
-            print(82 - line.count("."))
             if 82 - line.count(".") <= size and size_list <= 11:
+                print(line)
                 experiment.append(line)
                 size_list += 1
+                f.write("".join(line) + "\n")
+                break
             elif size_list >= 11:
                 break
             else:
@@ -40,17 +42,23 @@ def encode_sudoku(experiment: list, size: int):
                 index += 1
         f.write("\n")
 
-experiment_1, size = experiment_sudoku("/Users/alonefrati/Desktop/KR-1/top2365.sdk.txt", 16)
+experiment_1, size = experiment_sudoku("/Users/alonefrati/Desktop/KR-1/top2365.sdk.txt", 19)
 encode_sudoku(experiment_1, size)
 
-def get_cnf(filename: str):
+def get_cnf(filename: str | list):
     rules = open(filename, "r")
     cnf_list = []
     for line in rules:
         input = line.split()
-        if input[0] == "p":
-            continue
-        cnf_list.append([int(x) for x in input if x!="0"])
+        try:
+            if input[0] == "p":
+                continue
+            cnf_list.append([int(x) for x in input if x != "0"])
+        except IndexError:
+            pass
+
+
+
     return(cnf_list)
 
 def tautology(cnf):
@@ -71,7 +79,7 @@ def unit_clause(cnf):
 def dpll(cnf, assignments={}):
     
     unit_clauses = unit_clause(cnf)
-
+    print(len(cnf))
     if len(cnf) == 0:
         return True, assignments
  
@@ -83,6 +91,7 @@ def dpll(cnf, assignments={}):
             l = x
     else:
         l = unit_clauses[0]
+
     new_cnf = [c for c in cnf if l not in c]
     new_cnf = [c.difference({-l}) for c in new_cnf]
     sat, vals = dpll(new_cnf, {**assignments, **{l: l}})
@@ -96,23 +105,22 @@ def dpll(cnf, assignments={}):
  
     return False, None
 
-# encode_sudoku("top91.sdk.txt")
-# rules = get_cnf("sudoku-rules-9x9.txt")
-# sudoku = get_cnf("encoded-sudoku-1.cnf")
-#
-# clause_list =  sudoku + rules
-# clause_list = [set(ele) for ele in clause_list]
-#
-# cnf = tautology(clause_list)
-#
-# sat, vals = dpll(cnf)
-#
-# all_solutions = vals.values()
-# sudoku_solution = []
-# for solution in all_solutions:
-#     if solution > 0:
-#         sudoku_solution.append(solution)
-#
-# sudoku_solution.sort()
-# print(sudoku_solution)
-# print(len(sudoku_solution))
+rules = get_cnf("/Users/alonefrati/Desktop/KR-1/sudoku-rules-9x9.txt")
+sudoku = get_cnf("/Users/alonefrati/Desktop/KR-1/code/sat-solver/experiment4.cnf")
+print(sudoku)
+clause_list = sudoku + rules
+clause_list = [set(ele) for ele in clause_list]
+
+cnf = tautology(clause_list)
+
+sat, vals = dpll(cnf)
+
+all_solutions = vals.values()
+sudoku_solution = []
+for solution in all_solutions:
+    if solution > 0:
+        sudoku_solution.append(solution)
+
+sudoku_solution.sort()
+print(sudoku_solution)
+print(len(sudoku_solution))
