@@ -16,7 +16,7 @@ class Sudoku:
         self.encoded_sudoku = self.encode_sudoku()
 
         # combine rules and sudoku into clauses
-        self.clauses = self.combine_sudoku_with_rules(
+        self.all_sudoku_clauses = self.combine_sudoku_with_rules(
             encoded_sudoku=self.encoded_sudoku, encoded_rules=self.rules
         )
 
@@ -161,8 +161,9 @@ class Sudoku:
 
 if __name__ == "__main__":
     sudoku = Sudoku(
-        raw_sudoku_filepath="./../../data/sudoku_raw/top91.sdk.txt",
-        rules_filepath="./../../data/sudoku_rules/sudoku-rules-9x9.txt",
+        # raw_sudoku_filepath="./../../data/sudoku_raw/top91.sdk.txt",
+        raw_sudoku_filepath="./data/sudoku_raw/experiment_raw4.txt",
+        rules_filepath="./data/sudoku_rules/sudoku-rules-9x9.txt",
     )
 
     # for i, s in enumerate((sudoku.sudoku[0])):

@@ -1,3 +1,4 @@
+import datetime
 from time import perf_counter
 
 from satsolver.dpll import DPLL
@@ -7,54 +8,96 @@ from satsolver.suduko import Sudoku
 def main():
     # path wrt to the directory where the program is being called.
     # Assumption: it is being called from the same dir as `sat-solver/`
-    raw_sudoku_filepath = "./data/sudoku_raw/top91.sdk.txt"
-    rules_filepath = "./data/sudoku_rules/sudoku-rules-9x9.txt"
+    # raw_sudoku_filepath = "./data/sudoku_raw/top91.sdk.txt"
 
-    # load suduko
-    sudoku = Sudoku(
-        raw_sudoku_filepath=raw_sudoku_filepath,
-        rules_filepath=rules_filepath,
-    )
+    # read rules
+    RULES_FILEPATH = "./data/sudoku_rules/sudoku-rules-9x9.txt"
 
-    # csv file to store experiment data for visualization
-    with open("./data/output/experiment_stats.csv", "w") as f:
+    # read sudokus
+    RAW_SUDOKU_BASE_FILEPATH = "./data/sudoku_raw/"
+    RAW_SUDOKU_FILENAMES = [
+        "experiment_raw4.txt",
+        "experiment_raw9.txt",
+        "experiment_raw15.txt",
+        "experiment_raw18.txt",
+    ]
+
+    # create csv file to store experiment data for visualization
+    current_datetime = datetime.datetime.now()
+    unique_file_id = f"{current_datetime.year}_{current_datetime.month}_{current_datetime.day}_{current_datetime.hour}_{current_datetime.minute}"
+
+    with open(f"./data/output/experiment_stats_{unique_file_id}.csv", "w") as f:
         f.write(
-            "run,algorithm,is_satisfiable,sudoku_file,sudoku_file_id,time_elapsed solution"
+            "run,algorithm,is_satisfiable,sudoku_file,sudoku_id,time_elapsed,solution\n"
         )
 
-    # run all algorithms
-    runs = 1
+    # experiment params
+    RUNS = 3
+    ALGORITHMS = [1, 2, 3]
 
-    for run in range(1, runs + 1):
-        for algorithm in [1, 2, 3]:
+    # Loop config:
+    # for algorithm in ALGORITHMS:
+    #     for raw_sudoku_filename in RAW_SUDOKU_FILENAMES:
+    #         for sudoku in sudoku.all_sudoku_clauses:
+    #             for run in RUNS:
+
+    # for all runs
+    for run in range(1, RUNS + 1):
+        print(f"[{run}/{RUNS}] Run.\n")
+        # for all algorithms
+        for algorithm in ALGORITHMS:
             dpll = DPLL(algorithm=algorithm)
-            for clauses_idx, clauses in enumerate(sudoku.clauses):
-                print(f"Running algorithm {algorithm}.")
-                # measure running time of dpll
-                start = perf_counter()
-                is_satisfiable, solution_values = dpll.run(clauses=clauses)
-                end = perf_counter()
+            print(f"\t[{algorithm}/{len(ALGORITHMS)}] Algorithm.\n")
 
-                # time elapsed
-                time_elapsed = end - start
+            # for all files that contain multiple sudokus
+            for file_idx, raw_sudoku_filename in enumerate(RAW_SUDOKU_FILENAMES):
+                raw_sudoku_filepath = (
+                    f"{RAW_SUDOKU_BASE_FILEPATH}/{raw_sudoku_filename}"
+                )
+                sudoku = Sudoku(
+                    raw_sudoku_filepath=raw_sudoku_filepath,
+                    rules_filepath=RULES_FILEPATH,
+                )
+                print(
+                    f"\t\t[{file_idx}/{len(RAW_SUDOKU_FILENAMES)}] Sudoku File ({raw_sudoku_filename}).\n"
+                )
 
-                # process solution
-                solution = dpll.process_solution(solution_values=solution_values)
-
-                # log output
-                print(f"DPLL version = {algorithm}")
-                print(f"Sudoku satisfiability = {is_satisfiable}")
-                print(f"Time elapsed = {time_elapsed}")
-                print(f"Solution: \n {solution}")
-
-                print("=" * 50)
-
-                with open("./data/output/experiment_stats.csv", "a") as f:
-                    f.write(
-                        f"{run},{dpll.algorithm_to_name(algorithm_number=algorithm)},{is_satisfiable},{raw_sudoku_filepath},{clauses_idx},{time_elapsed},{' '.join(solution)}\n"
+                # for all sudokus in the file
+                for sudoku_id, sudoku_clauses in enumerate(sudoku.all_sudoku_clauses):
+                    print(
+                        f"\t\t\t[{sudoku_id}/{len(sudoku.all_sudoku_clauses)}] Sudoku inside file.\n"
                     )
 
-                break
+                    # # for all runs
+                    # for run in range(1, RUNS + 1):
+                    #     print(f"\t\t\t[{run}/{RUNS}] Run.\n")
+                    start = perf_counter()
+                    is_satisfiable, solution_values = dpll.run(clauses=sudoku_clauses)
+                    end = perf_counter()
 
-    if __name__ == "__main__":
-        main()
+                    # time elapsed
+                    time_elapsed = end - start
+
+                    # process solution
+                    solution = dpll.process_solution(solution_values=solution_values)
+
+                    # log output
+                    print(f"\t\t\t\tSudoku satisfiability = {is_satisfiable}")
+                    print(f"\t\t\t\tTime elapsed = {time_elapsed}")
+                    print(f"\t\t\t\tSolution = {solution}")
+
+                    # save data for analysis
+                    with open(
+                        f"./data/output/experiment_stats_{unique_file_id}.csv", "a"
+                    ) as f:
+                        f.write(
+                            f"{run},{dpll.algorithm_to_name(algorithm_number=algorithm)},{is_satisfiable},{raw_sudoku_filename},{sudoku_id},{time_elapsed},{' '.join([str(s) for s in solution])}\n"
+                        )
+                    print()
+        print()
+        print("=" * 50)
+        print()
+
+
+if __name__ == "__main__":
+    main()
