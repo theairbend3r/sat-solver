@@ -1,4 +1,5 @@
 import argparse
+from time import perf_counter
 from satsolver.dpll import DPLL
 from satsolver.suduko import Sudoku
 
@@ -31,10 +32,18 @@ def main():
 
     # run dpll
     dpll = DPLL(algorithm=args.S)
+
+    # measure running time of dpll
+    start = perf_counter()
     is_satisfiable, solution_values = dpll.run(clauses=clauses)
+    end = perf_counter()
+
+    # process solution
     solution = dpll.process_solution(solution_values=solution_values)
 
+    print(f"DPLL version = {args.S}")
     print(f"Sudoku satisfiability = {is_satisfiable}")
+    print(f"Time elapsed = {end - start}")
     print(f"Solution: \n {solution}")
 
 

@@ -1,4 +1,5 @@
 import random
+from collections import Counter
 
 
 class DPLL:
@@ -11,6 +12,54 @@ class DPLL:
                 if c in clause and -c in clause:
                     clauses = clauses.remove(clause)
         return clauses
+
+    def make_lists(self, clauses):
+        new_clauses = []
+        for set in clauses:
+            new_clauses.append(list(set))
+        return new_clauses
+
+    def make_positive_lists(self, clauses):
+        new_clauses = []
+        for set in clauses:
+            new_clauses.append(list(set))
+        for i in range(len(new_clauses)):
+            for j in range(len(new_clauses[i])):
+                new_clauses[i][j] = abs(new_clauses[i][j])
+
+        return new_clauses
+
+    def count_occurence_1(self, clauses):
+        list_clauses = self.make_lists(clauses)
+        maximum_occuring_element = Counter(
+            element for sublist in list_clauses for element in sublist
+        ).most_common(1)
+        return maximum_occuring_element[0][0]
+
+    def count_occurence_2(self, clauses):
+        list_clauses = self.make_lists(clauses)
+        list_clauses_abs = self.make_positive_lists(clauses)
+
+        maximum_occuring_element = Counter(
+            element for sublist in list_clauses_abs for element in sublist
+        ).most_common(1)
+        int_max_element = int(maximum_occuring_element[0][0])
+
+        neg_count = 0
+        pos_count = 0
+
+        for i in range(len(list_clauses)):
+            for j in range(len(list_clauses[i])):
+                if list_clauses[i][j] == int_max_element:
+                    pos_count += 1
+
+                if list_clauses[i][j] == -abs(int_max_element):
+                    neg_count += 1
+
+        if neg_count > pos_count:
+            return -abs(int_max_element)
+
+        return int_max_element
 
     def unit_clause(self, clauses):
         unit_clauses = []
@@ -53,15 +102,95 @@ class DPLL:
 
         return False, None
 
-    def dpll_heuristic_1(self, clauses, solution: dict = {}):
-        # write recursive code here
-        print(f"running dpll 1 on combined clauses {clauses}")
-        return solution
+    def dpll_heuristic_1(self, clauses, assignments: dict = {}):
+        unit_clauses = self.unit_clause(clauses)
+        if len(clauses) == 0:
+            return True, assignments
 
-    def dpll_heuristic_2(self, clauses, solution: dict = {}):
-        # write recursive code here
-        print(f"running dpll 2 on combined clauses {clauses}")
-        return solution
+        if any([len(c) == 0 for c in clauses]):
+            return False, None
+
+        if unit_clauses == []:
+            rand_unit_clause = self.count_occurence_1(clauses)
+
+        else:
+            rand_unit_clause = unit_clauses[0]
+
+        if rand_unit_clause < 0:
+            new_clauses = [c for c in clauses if -rand_unit_clause not in c]
+            new_clauses = [c.difference({rand_unit_clause}) for c in new_clauses]
+            sat, vals = self.dpll_heuristic_1(
+                new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}
+            )
+            neg_or_pos = "neg"
+        else:
+            new_clauses = [c for c in clauses if rand_unit_clause not in c]
+            new_clauses = [c.difference({-rand_unit_clause}) for c in new_clauses]
+            sat, vals = self.dpll_heuristic_1(
+                new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}
+            )
+            neg_or_pos = "pos"
+
+        if sat:
+            return sat, vals
+
+        if neg_or_pos == "neg":
+            new_clauses = [c for c in clauses if rand_unit_clause not in c]
+            new_clauses = [c.difference({-rand_unit_clause}) for c in new_clauses]
+            sat, vals = self.dpll_heuristic_1(
+                new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}
+            )
+        else:
+            new_clauses = [c for c in clauses if -rand_unit_clause not in c]
+            new_clauses = [c.difference({rand_unit_clause}) for c in new_clauses]
+            sat, vals = self.dpll_heuristic_1(
+                new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}
+            )
+        if sat:
+            return sat, vals
+
+        return False, None
+
+    def dpll_heuristic_2(self, clauses, assignments: dict = {}):
+        unit_clauses = self.unit_clause(clauses)
+        if len(clauses) == 0:
+            return True, assignments
+
+        if any([len(c) == 0 for c in clauses]):
+            return False, None
+
+        if unit_clauses == []:
+            l = self.count_occurence_2(clauses)
+
+        else:
+            l = unit_clauses[0]
+
+        if l < 0:
+            new_clauses = [c for c in clauses if -l not in c]
+            new_clauses = [c.difference({l}) for c in new_clauses]
+            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{-l: -l}})
+            neg_or_pos = "neg"
+        else:
+            new_clauses = [c for c in clauses if l not in c]
+            new_clauses = [c.difference({-l}) for c in new_clauses]
+            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{l: l}})
+            neg_or_pos = "pos"
+
+        if sat:
+            return sat, vals
+
+        if neg_or_pos == "neg":
+            new_clauses = [c for c in clauses if l not in c]
+            new_clauses = [c.difference({-l}) for c in new_clauses]
+            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{l: l}})
+        else:
+            new_clauses = [c for c in clauses if -l not in c]
+            new_clauses = [c.difference({l}) for c in new_clauses]
+            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{-l: -l}})
+        if sat:
+            return sat, vals
+
+        return False, None
 
     def run(self, clauses: list):
         if self.algorithm == 1:
@@ -91,17 +220,11 @@ if __name__ == "__main__":
         rules_filepath="./../../data/sudoku_rules/sudoku-rules-9x9.txt",
     )
 
-    print(len(sudoku.clauses[0]))
-    print(sudoku.clauses[0][:25])
-    clauses = [set(s) for s in sudoku.clauses[0]]
-    dpll = DPLL(algorithm=1)
-    sat, vals = dpll.run(clauses)
-    all_solutions = vals.values()
+    clauses = sudoku.clauses[0]
+    print(len(clauses))
+    dpll = DPLL(algorithm=2)
+    is_satisfiable, solution_values = dpll.run(clauses=clauses)
+    solution = dpll.process_solution(solution_values=solution_values)
 
-    sudoku_solution = []
-    for solution in all_solutions:
-        if solution > 0:
-            sudoku_solution.append(solution)
-
-    print(sudoku_solution)
-    print(len(sudoku_solution))
+    print(f"Sudoku satisfiability = {is_satisfiable}")
+    print(f"Solution: \n {solution}")
