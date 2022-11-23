@@ -1,6 +1,7 @@
 import random
 from collections import Counter
 
+import numpy as np
 
 class DPLL:
     def __init__(self, algorithm):
@@ -69,15 +70,15 @@ class DPLL:
                     unit_clauses.append(c)
         return unit_clauses
 
-    def dpll_baseline(self, clauses, assignments={}):
+    def dpll_baseline(self, clauses, assignments={}, old_cnf=np.inf, backtracks=0):
 
         unit_clauses = self.unit_clause(clauses)
 
         if len(clauses) == 0:
-            return True, assignments
+            return True, assignments, backtracks
 
         if any([len(c) == 0 for c in clauses]):
-            return False, None
+            return False, None, backtracks
 
         if unit_clauses == []:
             for x in random.choice(clauses):
@@ -87,22 +88,30 @@ class DPLL:
 
         new_clauses = [c for c in clauses if rand_unit_clause not in c]
         new_clauses = [c.difference({-rand_unit_clause}) for c in new_clauses]
-        sat, vals = self.dpll_baseline(
-            new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}
+
+        if len(new_clauses) > old_cnf:
+            backtracks += 1
+        old_cnf = len(new_clauses)
+
+        sat, vals, backtracks = self.dpll_baseline(
+            new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
         )
         if sat:
-            return sat, vals
+            return sat, vals, backtracks
         new_clauses = [c for c in clauses if -rand_unit_clause not in c]
         new_clauses = [c.difference({rand_unit_clause}) for c in new_clauses]
-        sat, vals = self.dpll_baseline(
-            new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}
+        if len(new_clauses) > old_cnf:
+            backtracks += 1
+        old_cnf = len(new_clauses)
+        sat, vals, backtracks = self.dpll_baseline(
+            new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
         )
         if sat:
-            return sat, vals
+            return sat, vals, backtracks
 
-        return False, None
+        return False, None, backtracks
 
-    def dpll_heuristic_1(self, clauses, assignments: dict = {}):
+    def dpll_heuristic_1(self, clauses, assignments: dict = {}, old_cnf=np.inf, backtracks=0):
         unit_clauses = self.unit_clause(clauses)
         if len(clauses) == 0:
             return True, assignments
@@ -119,15 +128,21 @@ class DPLL:
         if rand_unit_clause < 0:
             new_clauses = [c for c in clauses if -rand_unit_clause not in c]
             new_clauses = [c.difference({rand_unit_clause}) for c in new_clauses]
+            if len(new_clauses) > old_cnf:
+                backtracks += 1
+            old_cnf = len(new_clauses)
             sat, vals = self.dpll_heuristic_1(
-                new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}
+                new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
             )
             neg_or_pos = "neg"
         else:
             new_clauses = [c for c in clauses if rand_unit_clause not in c]
             new_clauses = [c.difference({-rand_unit_clause}) for c in new_clauses]
+            if len(new_clauses) > old_cnf:
+                backtracks += 1
+            old_cnf = len(new_clauses)
             sat, vals = self.dpll_heuristic_1(
-                new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}
+                new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
             )
             neg_or_pos = "pos"
 
@@ -137,21 +152,27 @@ class DPLL:
         if neg_or_pos == "neg":
             new_clauses = [c for c in clauses if rand_unit_clause not in c]
             new_clauses = [c.difference({-rand_unit_clause}) for c in new_clauses]
+            if len(new_clauses) > old_cnf:
+                backtracks += 1
+            old_cnf = len(new_clauses)
             sat, vals = self.dpll_heuristic_1(
-                new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}
+                new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
             )
         else:
             new_clauses = [c for c in clauses if -rand_unit_clause not in c]
             new_clauses = [c.difference({rand_unit_clause}) for c in new_clauses]
+            if len(new_clauses) > old_cnf:
+                backtracks += 1
+            old_cnf = len(new_clauses)
             sat, vals = self.dpll_heuristic_1(
-                new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}
+                new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
             )
         if sat:
             return sat, vals
 
         return False, None
 
-    def dpll_heuristic_2(self, clauses, assignments: dict = {}):
+    def dpll_heuristic_2(self, clauses, assignments: dict = {},old_cnf=np.inf, backtracks=0):
         unit_clauses = self.unit_clause(clauses)
         if len(clauses) == 0:
             return True, assignments
@@ -168,12 +189,18 @@ class DPLL:
         if l < 0:
             new_clauses = [c for c in clauses if -l not in c]
             new_clauses = [c.difference({l}) for c in new_clauses]
-            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{-l: -l}})
+            if len(new_clauses) > old_cnf:
+                backtracks += 1
+            old_cnf = len(new_clauses)
+            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{-l: -l}}, old_cnf=old_cnf, backtracks=backtracks)
             neg_or_pos = "neg"
         else:
             new_clauses = [c for c in clauses if l not in c]
             new_clauses = [c.difference({-l}) for c in new_clauses]
-            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{l: l}})
+            if len(new_clauses) > old_cnf:
+                backtracks += 1
+            old_cnf = len(new_clauses)
+            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{l: l}}, old_cnf=old_cnf, backtracks=backtracks)
             neg_or_pos = "pos"
 
         if sat:
@@ -182,11 +209,17 @@ class DPLL:
         if neg_or_pos == "neg":
             new_clauses = [c for c in clauses if l not in c]
             new_clauses = [c.difference({-l}) for c in new_clauses]
-            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{l: l}})
+            if len(new_clauses) > old_cnf:
+                backtracks += 1
+            old_cnf = len(new_clauses)
+            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{l: l}}, old_cnf=old_cnf, backtracks=backtracks)
         else:
             new_clauses = [c for c in clauses if -l not in c]
             new_clauses = [c.difference({l}) for c in new_clauses]
-            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{-l: -l}})
+            if len(new_clauses) > old_cnf:
+                backtracks += 1
+            old_cnf = len(new_clauses)
+            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{-l: -l}}, old_cnf=old_cnf, backtracks=backtracks)
         if sat:
             return sat, vals
 

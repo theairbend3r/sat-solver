@@ -3,18 +3,18 @@ from time import perf_counter
 
 from dpll import DPLL
 from suduko import Sudoku
-
-
+import sys
+sys.path.append("/code/sat-solver/src/satsolver/data/")
 def main():
     # path wrt to the directory where the program is being called.
     # Assumption: it is being called from the same dir as `sat-solver/`
     # raw_sudoku_filepath = "./data/sudoku_raw/top91.sdk.txt"
 
     # read rules
-    RULES_FILEPATH = "/Users/alonefrati/Desktop/KR-1/code/sat-solver/src/satsolver/data/sudoku_rules/sudoku-rules-9x9.txt"
+    RULES_FILEPATH = "data/sudoku_rules/sudoku-rules-9x9.txt"
 
     # read sudokus
-    RAW_SUDOKU_BASE_FILEPATH = "/Users/alonefrati/Desktop/KR-1/code/sat-solver/src/satsolver/data/sudoku_raw"
+    RAW_SUDOKU_BASE_FILEPATH = "data/sudoku_raw"
     RAW_SUDOKU_FILENAMES = [
         "experiment_raw4.cnf",
         "experiment_raw9.cnf",
@@ -67,12 +67,12 @@ def main():
                     print(
                         f"\t\t\t[{sudoku_id}/{len(sudoku.all_sudoku_clauses)}] Sudoku inside file.\n"
                     )
-                    print(sudoku_clauses[0])
+
                     # # for all runss
                     # for run in range(1, RUNS + 1):
                     #     print(f"\t\t\t[{run}/{RUNS}] Run.\n")
                     start = perf_counter()
-                    is_satisfiable, solution_values = dpll.run(clauses=sudoku_clauses)
+                    is_satisfiable, solution_values, backtracks = dpll.run(clauses=sudoku_clauses)
                     end = perf_counter()
 
                     # time elapsed
@@ -85,13 +85,14 @@ def main():
                     print(f"\t\t\t\tSudoku satisfiability = {is_satisfiable}")
                     print(f"\t\t\t\tTime elapsed = {time_elapsed}")
                     print(f"\t\t\t\tSolution = {solution}")
+                    print(f"\t\t\t\tSolution = {backtracks}")
 
                     # save data for analysis
                     with open(
                         f"./data/output/experiment_stats_{unique_file_id}.csv", "a"
                     ) as f:
                         f.write(
-                            f"{run},{dpll.algorithm_to_name(algorithm_number=algorithm)},{is_satisfiable},{raw_sudoku_filename},{sudoku_id},{time_elapsed},{' '.join([str(s) for s in solution])}\n"
+                            f"{run},{dpll.algorithm_to_name(algorithm_number=algorithm)},{is_satisfiable},{raw_sudoku_filename},{sudoku_id},{backtracks},{time_elapsed},{' '.join([str(s) for s in solution])}\n"
                         )
                     print()
         print()
