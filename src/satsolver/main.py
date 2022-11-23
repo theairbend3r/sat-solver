@@ -35,7 +35,7 @@ def main():
 
     # measure running time of dpll
     start = perf_counter()
-    is_satisfiable, solution_values = dpll.run(clauses=clauses)
+    is_satisfiable, solution_values, backtracks = dpll.run(clauses=clauses)
     end = perf_counter()
 
     # process solution
