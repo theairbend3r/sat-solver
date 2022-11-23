@@ -88,9 +88,6 @@ class DPLL:
 
         new_clauses = [c for c in clauses if rand_unit_clause not in c]
         new_clauses = [c.difference({-rand_unit_clause}) for c in new_clauses]
-
-        if len(new_clauses) > old_cnf:
-            backtracks += 1
         old_cnf = len(new_clauses)
 
         sat, vals, backtracks = self.dpll_baseline(
