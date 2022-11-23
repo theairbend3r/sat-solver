@@ -28,7 +28,7 @@ def main():
 
     with open(f"./data/output/experiment_stats_{unique_file_id}.csv", "w") as f:
         f.write(
-            "run,algorithm,is_satisfiable,sudoku_file,sudoku_id,time_elapsed,solution\n"
+            "run,algorithm,is_satisfiable,sudoku_file,sudoku_id,backtracks,time_elapsed,solution\n"
         )
 
     # experiment params
