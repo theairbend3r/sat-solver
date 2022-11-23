@@ -218,7 +218,7 @@ class DPLL:
 
 
 if __name__ == "__main__":
-    from satsolver.suduko import Sudoku
+    from suduko import Sudoku
 
     sudoku = Sudoku(
         raw_sudoku_filepath="./../../data/sudoku_raw/top91.sdk.txt",

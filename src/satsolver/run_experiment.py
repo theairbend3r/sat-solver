@@ -1,8 +1,8 @@
 import datetime
 from time import perf_counter
 
-from satsolver.dpll import DPLL
-from satsolver.suduko import Sudoku
+from dpll import DPLL
+from suduko import Sudoku
 
 
 def main():
@@ -11,15 +11,15 @@ def main():
     # raw_sudoku_filepath = "./data/sudoku_raw/top91.sdk.txt"
 
     # read rules
-    RULES_FILEPATH = "./data/sudoku_rules/sudoku-rules-9x9.txt"
+    RULES_FILEPATH = "/Users/alonefrati/Desktop/KR-1/code/sat-solver/src/satsolver/data/sudoku_rules/sudoku-rules-9x9.txt"
 
     # read sudokus
-    RAW_SUDOKU_BASE_FILEPATH = "./data/sudoku_raw/"
+    RAW_SUDOKU_BASE_FILEPATH = "/Users/alonefrati/Desktop/KR-1/code/sat-solver/src/satsolver/data/sudoku_raw"
     RAW_SUDOKU_FILENAMES = [
-        "experiment_raw4.txt",
-        "experiment_raw9.txt",
-        "experiment_raw15.txt",
-        "experiment_raw18.txt",
+        "experiment_raw4.cnf",
+        "experiment_raw9.cnf",
+        "experiment_raw15.cnf",
+        "experiment_raw18.cnf",
     ]
 
     # create csv file to store experiment data for visualization
@@ -67,8 +67,8 @@ def main():
                     print(
                         f"\t\t\t[{sudoku_id}/{len(sudoku.all_sudoku_clauses)}] Sudoku inside file.\n"
                     )
-
-                    # # for all runs
+                    print(sudoku_clauses[0])
+                    # # for all runss
                     # for run in range(1, RUNS + 1):
                     #     print(f"\t\t\t[{run}/{RUNS}] Run.\n")
                     start = perf_counter()

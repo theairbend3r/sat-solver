@@ -6,7 +6,8 @@ plt.figure(figsize=(8, 6))
 sns.set_style("whitegrid")
 sns.set(font_scale=1.5, rc={"text.usetex": True})
 
-
+test = pd.read_csv("data/output/experiment_stats_2022_11_22_20_59.csv")
+print(test["time_elapsed"].sum())
 class Visualisation:
     def __init__(self, csv_file_path: str):
         self.csv_file_path = csv_file_path
