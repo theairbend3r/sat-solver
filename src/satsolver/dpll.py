@@ -128,7 +128,7 @@ class DPLL:
             if len(new_clauses) > old_cnf:
                 backtracks += 1
             old_cnf = len(new_clauses)
-            sat, vals = self.dpll_heuristic_1(
+            sat, vals, backtracks= self.dpll_heuristic_1(
                 new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
             )
             neg_or_pos = "neg"
@@ -138,7 +138,7 @@ class DPLL:
             if len(new_clauses) > old_cnf:
                 backtracks += 1
             old_cnf = len(new_clauses)
-            sat, vals = self.dpll_heuristic_1(
+            sat, vals, backtracks= self.dpll_heuristic_1(
                 new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
             )
             neg_or_pos = "pos"
@@ -152,7 +152,7 @@ class DPLL:
             if len(new_clauses) > old_cnf:
                 backtracks += 1
             old_cnf = len(new_clauses)
-            sat, vals = self.dpll_heuristic_1(
+            sat, vals, backtracks = self.dpll_heuristic_1(
                 new_clauses, {**assignments, **{rand_unit_clause: rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
             )
         else:
@@ -161,7 +161,7 @@ class DPLL:
             if len(new_clauses) > old_cnf:
                 backtracks += 1
             old_cnf = len(new_clauses)
-            sat, vals = self.dpll_heuristic_1(
+            sat, vals, backtracks = self.dpll_heuristic_1(
                 new_clauses, {**assignments, **{-rand_unit_clause: -rand_unit_clause}}, old_cnf=old_cnf, backtracks=backtracks
             )
         if sat:
@@ -216,7 +216,7 @@ class DPLL:
             if len(new_clauses) > old_cnf:
                 backtracks += 1
             old_cnf = len(new_clauses)
-            sat, vals = self.dpll_heuristic_2(new_clauses, {**assignments, **{-l: -l}}, old_cnf=old_cnf, backtracks=backtracks)
+            sat, vals, backtracks = self.dpll_heuristic_2(new_clauses, {**assignments, **{-l: -l}}, old_cnf=old_cnf, backtracks=backtracks)
         if sat:
             return sat, vals, backtracks
 

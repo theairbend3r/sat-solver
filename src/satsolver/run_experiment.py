@@ -32,8 +32,8 @@ def main():
         )
 
     # experiment params
-    RUNS = 3
-    ALGORITHMS = [1, 2, 3]
+    RUNS = 1
+    ALGORITHMS = [2, 3]
 
     # Loop config:
     # for algorithm in ALGORITHMS:
