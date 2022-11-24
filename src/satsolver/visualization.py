@@ -31,12 +31,21 @@ class Visualisation:
         # plt.show()
 
     def compare_algo_across_prefilled_boxes(self):
-
         # create data
         mean_time_df = (
             self.df.groupby(["algorithm", "prefilled_boxes"])
             .agg({"time_elapsed": "mean"})
             .reset_index()
+        ).sort_values(
+            "prefilled_boxes",
+            key=lambda x: x.map(
+                {
+                    "4": 1,
+                    "9": 2,
+                    "15": 3,
+                    "18": 4,
+                }
+            ),
         )
 
         mean_backtracks_df = (
@@ -46,7 +55,7 @@ class Visualisation:
         )
 
         # plot figure
-        fig, axes = plt.subplots(2, 1, figsize=(8, 6), sharex=True, sharey=True)
+        fig, axes = plt.subplots(2, 1, figsize=(8, 6), sharex=True, sharey=False)
         fig.suptitle("Time and Backtracks for each Algorithm")
 
         # time elapsed
@@ -75,7 +84,7 @@ class Visualisation:
         )
 
         fig.savefig("./plots/compare_algo_across_prefilled_boxes.png")
-        # plt.show()
+        plt.show()
 
 
 if __name__ == "__main__":
