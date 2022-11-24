@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -15,13 +16,31 @@ class Visualisation:
             self.df["sudoku_file"].str.split(".").str[0].str.split("_").str[-1]
         )  # .astype(int)
 
+    def histogram_num_backtracks(self):
+        bins = [0, 1, 10, 50, 100, 200, np.inf]
+        labels = ["0", "1-10", "11-50", "51-99", "99-200", "200+"]
+
+        self.df["freq"] = pd.cut(self.df["backtracks"], bins, labels=labels)
+
+        sns.barplot(data=self.df, x="freq", y="backtracks", hue="algorithm")
+
+        # .set(
+        #     title="Average Number of Backtracks vs Number of Prefilled Cells",
+        #     xlabel="Number of Prefilled Cells",
+        #     ylabel="Number of Backtracks",
+        # )
+        plt.savefig("./plots/histogram_num_backtracks.png")
+        plt.show()
+
     def compare_algo_across_prefilled_boxes(self):
+
         # create data
         mean_time_df = (
             self.df.groupby(["algorithm", "prefilled_boxes"])
             .agg({"time_elapsed": "mean"})
             .reset_index()
         )
+
         mean_backtracks_df = (
             self.df.groupby(["algorithm", "prefilled_boxes"])
             .agg({"backtracks": "mean"})
@@ -66,3 +85,4 @@ if __name__ == "__main__":
         csv_file_path="./data/output/experiment_stats_2022_11_22_20_59.csv"
     )
     visualisation.compare_algo_across_prefilled_boxes()
+    # visualisation.histogram_num_backtracks()

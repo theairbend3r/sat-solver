@@ -1,11 +1,12 @@
 import math
+from pathlib import Path
 
 
 class Sudoku:
     def __init__(self, raw_sudoku_filepath: str, rules_filepath: str):
         # filepaths
-        self.rules_filepath = rules_filepath
-        self.raw_sudoku_filepath = raw_sudoku_filepath
+        self.rules_filepath = Path(rules_filepath)
+        self.raw_sudoku_filepath = Path(raw_sudoku_filepath)
 
         # ?? should probably convert the logic below to use regex
         self.raw_sudoku_filename = self.raw_sudoku_filepath.split("/")[-1].split(".")[0]
