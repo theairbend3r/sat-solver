@@ -8,8 +8,8 @@ class Sudoku:
         self.rules_filepath = Path(rules_filepath)
         self.raw_sudoku_filepath = Path(raw_sudoku_filepath)
 
-        # ?? should probably convert the logic below to use regex
-        self.raw_sudoku_filename = self.raw_sudoku_filepath.split("/")[-1].split(".")[0]
+        # should probably convert the logic below to use regex
+        self.raw_sudoku_filename = self.raw_sudoku_filepath.parts[-1].split(".")[0]
 
         # load rules and sudoku
         self.rules = self.read_rules()
@@ -173,5 +173,5 @@ if __name__ == "__main__":
     # print(len(sudoku.sudoku[0]))
     # print(sudoku._encode_single_sudoku(sudoku.sudoku[0]))
     # print(sudoku.rules)
-    print(len(sudoku.clauses[0]))
-    print(sudoku.clauses[0][:25])
+    # print(len(sudoku.clauses[0]))
+    # print(sudoku.clauses[0][:25])

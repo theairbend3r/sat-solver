@@ -28,14 +28,14 @@ def main():
     )
 
     # get clauses for a single sudoku
-    clauses = sudoku.clauses[0]
+    clauses = sudoku.all_sudoku_clauses[0]
 
     # run dpll
     dpll = DPLL(algorithm=args.S)
 
     # measure running time of dpll
     start = perf_counter()
-    is_satisfiable, solution_values = dpll.run(clauses=clauses)
+    is_satisfiable, solution_values, backtracks = dpll.run(clauses=clauses)
     end = perf_counter()
 
     # process solution
@@ -44,6 +44,7 @@ def main():
     print(f"DPLL version = {args.S}")
     print(f"Sudoku satisfiability = {is_satisfiable}")
     print(f"Time elapsed = {end - start}")
+    print(f"Number of backtracks = {backtracks}")
     print(f"Solution: \n {solution}")
 
 

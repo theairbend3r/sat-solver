@@ -28,18 +28,18 @@ def main():
 
     with open(f"./data/output/experiment_stats_{unique_file_id}.csv", "w") as f:
         f.write(
-            "run,algorithm,is_satisfiable,sudoku_file,sudoku_id,time_elapsed,solution\n"
+            "run,algorithm,is_satisfiable,sudoku_file,sudoku_id,time_elapsed,backtracks,solution\n"
         )
 
     # experiment params
     RUNS = 3
     ALGORITHMS = [1, 2, 3]
 
-    # Loop config:
-    # for algorithm in ALGORITHMS:
-    #     for raw_sudoku_filename in RAW_SUDOKU_FILENAMES:
-    #         for sudoku in sudoku.all_sudoku_clauses:
-    #             for run in RUNS:
+    #   Loop config:
+    #   for run in RUNS:
+    #       for algorithm in ALGORITHMS:
+    #           for raw_sudoku_filename in RAW_SUDOKU_FILENAMES:
+    #               for sudoku in sudoku.all_sudoku_clauses:
 
     # for all runs
     for run in range(1, RUNS + 1):
@@ -59,20 +59,22 @@ def main():
                     rules_filepath=RULES_FILEPATH,
                 )
                 print(
-                    f"\t\t[{file_idx}/{len(RAW_SUDOKU_FILENAMES)}] Sudoku File ({raw_sudoku_filename}).\n"
+                    f"\t\t[{file_idx+1}/{len(RAW_SUDOKU_FILENAMES)}] Sudoku File ({raw_sudoku_filename}).\n"
                 )
 
                 # for all sudokus in the file
                 for sudoku_id, sudoku_clauses in enumerate(sudoku.all_sudoku_clauses):
                     print(
-                        f"\t\t\t[{sudoku_id}/{len(sudoku.all_sudoku_clauses)}] Sudoku inside file.\n"
+                        f"\t\t\t[{sudoku_id+1}/{len(sudoku.all_sudoku_clauses)}] Sudoku inside file.\n"
                     )
 
                     # # for all runs
                     # for run in range(1, RUNS + 1):
                     #     print(f"\t\t\t[{run}/{RUNS}] Run.\n")
                     start = perf_counter()
-                    is_satisfiable, solution_values = dpll.run(clauses=sudoku_clauses)
+                    is_satisfiable, solution_values, backtracks = dpll.run(
+                        clauses=sudoku_clauses
+                    )
                     end = perf_counter()
 
                     # time elapsed
@@ -84,6 +86,7 @@ def main():
                     # log output
                     print(f"\t\t\t\tSudoku satisfiability = {is_satisfiable}")
                     print(f"\t\t\t\tTime elapsed = {time_elapsed}")
+                    print(f"\t\t\t\tBacktracks = {backtracks}")
                     print(f"\t\t\t\tSolution = {solution}")
 
                     # save data for analysis
@@ -91,7 +94,7 @@ def main():
                         f"./data/output/experiment_stats_{unique_file_id}.csv", "a"
                     ) as f:
                         f.write(
-                            f"{run},{dpll.algorithm_to_name(algorithm_number=algorithm)},{is_satisfiable},{raw_sudoku_filename},{sudoku_id},{time_elapsed},{' '.join([str(s) for s in solution])}\n"
+                            f"{run},{dpll.algorithm_to_name(algorithm_number=algorithm)},{is_satisfiable},{raw_sudoku_filename},{sudoku_id},{time_elapsed},{backtracks},{' '.join([str(s) for s in solution])}\n"
                         )
                     print()
         print()
