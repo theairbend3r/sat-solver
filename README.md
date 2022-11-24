@@ -12,6 +12,8 @@ https://github.com/theairbend3r/sat-solver.git
 
 ### Create data directory
 
+Ensure the files in `sudoku_raw/` have an `_` before the last number. The naming format is `experiment_raw_{number}.txt`.
+
 ```
 sat-solver/data/
 data/
@@ -20,10 +22,10 @@ data/
 ├── sudoku_dimacs
 │   └── top91_sudoku.cnf
 ├── sudoku_raw
-│   ├── experiment_raw15.txt
-│   ├── experiment_raw18.txt
-│   ├── experiment_raw4.txt
-│   ├── experiment_raw9.txt
+│   ├── experiment_raw_15.txt
+│   ├── experiment_raw_18.txt
+│   ├── experiment_raw_4.txt
+│   ├── experiment_raw_9.txt
 │   └── top91.sdk.txt
 └── sudoku_rules
     └── sudoku-rules-9x9.txt

@@ -11,20 +11,58 @@ class Visualisation:
     def __init__(self, csv_file_path: str):
         self.csv_file_path = csv_file_path
         self.df = pd.read_csv(self.csv_file_path)
+        self.df["prefilled_boxes"] = (
+            self.df["sudoku_file"].str.split(".").str[0].str.split("_").str[-1]
+        )  # .astype(int)
 
-    def compare_average_algo_runtime(self):
-        agg_df = (
-            self.df.groupby(["algorithm"]).agg({"time_elapsed": "mean"}).reset_index()
+    def compare_algo_across_prefilled_boxes(self):
+        # create data
+        mean_time_df = (
+            self.df.groupby(["algorithm", "prefilled_boxes"])
+            .agg({"time_elapsed": "mean"})
+            .reset_index()
         )
-        sns.barplot(data=agg_df, x="algorithm", y="time_elapsed",).set(
-            title="Average Runtime Per Algorithm",
-            xlabel="DPLL Algorithms",
+        mean_backtracks_df = (
+            self.df.groupby(["algorithm", "prefilled_boxes"])
+            .agg({"backtracks": "mean"})
+            .reset_index()
+        )
+
+        # plot figure
+        fig, axes = plt.subplots(2, 1, figsize=(8, 6), sharex=True, sharey=True)
+        fig.suptitle("Time and Backtracks for each Algorithm")
+
+        # time elapsed
+        sns.lineplot(
+            data=mean_time_df,
+            x="prefilled_boxes",
+            y="time_elapsed",
+            hue="algorithm",
+            ax=axes[0],
+        ).set(
+            title="Average Runtime vs Number of Prefilled Cells",
+            xlabel="Number of Prefilled Cells",
             ylabel="Time Elapsed (seconds)",
         )
-        plt.savefig("./plots/average_algo_runtime.png")
+        # backtracks
+        sns.lineplot(
+            data=mean_backtracks_df,
+            x="prefilled_boxes",
+            y="backtracks",
+            hue="algorithm",
+            ax=axes[1],
+        ).set(
+            title="Average Number of Backtracks vs Number of Prefilled Cells",
+            xlabel="Number of Prefilled Cells",
+            ylabel="Number of Backtracks",
+        )
+
+        fig.savefig("./plots/compare_algo_across_prefilled_boxes.png")
         plt.show()
 
 
 if __name__ == "__main__":
-    visualisation = Visualisation(csv_file_path="./data/output/experiment_stats.csv")
-    visualisation.compare_average_algo_runtime()
+    visualisation = Visualisation(
+        csv_file_path="./data/output/experiment_stats_2022_11_22_20_59.csv"
+    )
+    visualisation.compare_algo_across_prefilled_boxes()
