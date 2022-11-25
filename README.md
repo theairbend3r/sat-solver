@@ -85,5 +85,5 @@ Test results is stored in `sat-solver/data/output/`.
 From inside `sat-sover/`, run:
 
 ```
-python src/satsolver/visualization.py
+python src/satsolver/hypothesis_test.py
 ```
