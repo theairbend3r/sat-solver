@@ -47,10 +47,15 @@ pip install -e .
 
 The CLI argument format is: `SAT -S {n} {filename}` where `n=1, 2, or 3` denotes the algorithm to be run on `filename`.
 
-From inside `sat-sover/`, run:
+From inside `sat-sover/`, run --- `SAT -S 2 mydir/myfile.txt`.
+
+A few example commands.
 
 ```
-SAT -S 2 mydir/myfile.txt
+SAT -S 1 data/sudoku_raw/experiment_raw_15.txt
+SAT -S 2 data/sudoku_raw/experiment_raw_9.txt
+SAT -S 3 data/sudoku_raw/experiment_raw_4.txt
+SAT -S 1 data/sudoku_raw/experiment_raw_18.txt
 ```
 
 ### Experiment Runner
