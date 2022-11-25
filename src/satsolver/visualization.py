@@ -17,18 +17,18 @@ class Visualisation:
         )  # .astype(int)
 
     def histogram_num_backtracks(self):
-        bins = [0, 1, 10, 50, 100, 200, np.inf]
-        labels = ["0", "1-10", "11-50", "51-99", "99-200", "200+"]
+        bins = [0, 100, 200, 500, 1000, 2000, np.inf]
+        labels = ["0-100", "101-200", "201-500", "501-1000", "1001-2000", "2000+"]
 
         self.df["freq"] = pd.cut(self.df["backtracks"], bins, labels=labels)
 
-        sns.barplot(data=self.df, x="freq", y="backtracks", hue="algorithm").set(
+        sns.countplot(data=self.df, x="freq", hue="algorithm").set(
             title="Backtracks Per Algorithm",
-            xlabel="Algorithm",
-            ylabel="Number of Backtracks",
+            xlabel="Number of Backtracks",
+            ylabel="Frequency",
         )
         plt.savefig("./plots/histogram_num_backtracks.png")
-        # plt.show()
+        plt.show()
 
     def compare_algo_across_prefilled_boxes(self):
         # create data
@@ -88,8 +88,7 @@ class Visualisation:
 
 
 if __name__ == "__main__":
-    visualisation = Visualisation(
-        csv_file_path="./data/output/experiment_stats_2022_11_22_20_59.csv"
-    )
-    # visualisation.histogram_num_backtracks()
-    visualisation.compare_algo_across_prefilled_boxes()
+    visualisation = Visualisation(csv_file_path="./data/output/results.csv")
+
+    visualisation.histogram_num_backtracks()
+    # visualisation.compare_algo_across_prefilled_boxes()
