@@ -67,3 +67,23 @@ From inside `sat-sover/`, run:
 ```
 python src/satsolver/run_experiment.py
 ```
+
+### Generate Visualization
+
+The plots are stored in `sat-solver/plots/`.
+
+From inside `sat-sover/`, run:
+
+```
+python src/satsolver/visualization.py
+```
+
+### Run T-Test
+
+Test results is stored in `sat-solver/data/output/`.
+
+From inside `sat-sover/`, run:
+
+```
+python src/satsolver/visualization.py
+```

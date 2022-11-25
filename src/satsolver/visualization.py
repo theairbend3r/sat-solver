@@ -91,4 +91,4 @@ if __name__ == "__main__":
     visualisation = Visualisation(csv_file_path="./data/output/results.csv")
 
     visualisation.histogram_num_backtracks()
-    # visualisation.compare_algo_across_prefilled_boxes()
+    visualisation.compare_algo_across_prefilled_boxes()
