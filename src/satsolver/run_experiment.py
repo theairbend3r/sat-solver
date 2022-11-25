@@ -14,7 +14,7 @@ def main():
     RULES_FILEPATH = "./data/sudoku_rules/sudoku-rules-9x9.txt"
 
     # read sudokus
-    RAW_SUDOKU_BASE_FILEPATH = "./data/sudoku_raw/"
+    RAW_SUDOKU_BASE_FILEPATH = "./data/sudoku_raw"
     RAW_SUDOKU_FILENAMES = [
         "experiment_raw4.txt",
         "experiment_raw9.txt",
