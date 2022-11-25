@@ -1,9 +1,3 @@
-# ignore txt files
-*.txt
-*.cnf
-*.csv
-*.png
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -32,7 +32,7 @@ def main():
         )
 
     # experiment params
-    RUNS = 5
+    RUNS = 3
     ALGORITHMS = [1, 2, 3]
 
     #   Loop config:
