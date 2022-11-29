@@ -1,5 +1,7 @@
 # sat-solver
 
+Sat-Solver for Sudokus.
+
 ## Installation
 
 Create virtual environment (Python=3.10+ recommended).
